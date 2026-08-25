@@ -17,6 +17,22 @@ assets/
 README.md
 ```
 
+## Déploiement
+
+Le site est publié sur GitHub Pages par le workflow `.github/workflows/pages.yml`,
+déclenché à chaque push sur `main` (et manuellement via *Actions → Déploiement GitHub
+Pages → Run workflow*). La racine du dépôt est publiée telle quelle : aucune étape de
+build, aucun dossier `dist`.
+
+Une manipulation est nécessaire une seule fois, dans l'interface GitHub :
+**Settings → Pages → Build and deployment → Source : GitHub Actions**.
+
+Adresse de publication : `https://stoure2022.github.io/site_internet_lsahelien_tech/`
+
+Tous les chemins du site sont relatifs (`assets/...`), il fonctionne donc aussi bien à la
+racine d'un domaine qu'en sous-répertoire. Pour un nom de domaine personnalisé, ajouter un
+fichier `CNAME` à la racine contenant le domaine, puis le déclarer dans Settings → Pages.
+
 ## Charte appliquée
 
 | Rôle | Couleur | Variable CSS |
