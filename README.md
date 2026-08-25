@@ -24,11 +24,15 @@ déclenché à chaque push sur `main` (et manuellement via *Actions → Déploie
 Pages → Run workflow*). La racine du dépôt est publiée telle quelle : aucune étape de
 build, aucun dossier `dist`.
 
-Le workflow active lui-même GitHub Pages au premier passage (`enablement: true` sur
-`actions/configure-pages`). Si l'organisation ou le compte refuse cette activation
-automatique, la faire à la main une seule fois :
-**Settings → Pages → Build and deployment → Source : GitHub Actions**, puis relancer le
-workflow.
+**Réglage à faire une fois**, dans l'interface GitHub :
+**Settings → Pages → Build and deployment → Source : GitHub Actions**.
+
+Le workflow tente d'activer Pages lui-même (`enablement: true` sur
+`actions/configure-pages`), mais le `GITHUB_TOKEN` par défaut n'a pas le droit de créer
+un site Pages : l'API répond `Resource not accessible by integration`. L'option est
+conservée car elle devient un simple constat une fois Pages activé, et fonctionne sur les
+dépôts dont le jeton dispose des droits d'administration. Après le réglage manuel,
+relancer le workflow depuis *Actions → Déploiement GitHub Pages → Run workflow*.
 
 Adresse de publication : `https://stoure2022.github.io/site_internet_lsahelien_tech/`
 
