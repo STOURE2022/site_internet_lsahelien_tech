@@ -47,6 +47,16 @@ Dans *Settings → Secrets and variables → Actions* du dépôt :
 Le workflow échoue avec un message explicite si `CLOUDFLARE_API_TOKEN` est absent, plutôt
 que de laisser Wrangler produire une erreur d'authentification obscure.
 
+### Métadonnées de partage
+
+`index.html` déclare une URL canonique et des balises Open Graph pointant vers l'adresse
+`workers.dev`. En cas de changement de domaine, mettre à jour `link[rel=canonical]`,
+`meta[property="og:url"]` et `meta[property="og:image"]`.
+
+Réserve : `og:image` référence le SVG du hero, or la plupart des réseaux sociaux
+n'affichent pas d'aperçu au format SVG. Pour une vignette de partage effective, produire
+une image PNG ou JPEG de 1200 × 630 px et la référencer à la place.
+
 ### Déploiement manuel
 
 ```sh
