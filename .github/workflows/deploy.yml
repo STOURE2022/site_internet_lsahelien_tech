@@ -20,16 +20,24 @@ jobs:
       - name: Récupération du dépôt
         uses: actions/checkout@v4
 
-      - name: Vérification du secret
+      - name: Vérification des secrets
         run: |
           if [ -z "${{ secrets.CLOUDFLARE_API_TOKEN }}" ]; then
             echo "::error::Le secret CLOUDFLARE_API_TOKEN est absent. \
           L'ajouter dans Settings → Secrets and variables → Actions."
             exit 1
           fi
+          if [ -z "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ]; then
+            echo "::warning::CLOUDFLARE_ACCOUNT_ID n'est pas renseigné. \
+          Sans lui, Wrangler interroge /memberships pour retrouver le compte, ce que la \
+          plupart des jetons restreints ne peuvent pas faire (Authentication error 10000)."
+          fi
 
+      # wranglerVersion : la v3 embarquée par défaut ne gère pas Workers Static
+      # Assets de manière stable ; la v4 est la version où la fonctionnalité est GA.
       - name: Déploiement sur Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: "4"

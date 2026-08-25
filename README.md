@@ -42,7 +42,12 @@ Dans *Settings → Secrets and variables → Actions* du dépôt :
 | Secret | Obligatoire | Où le trouver |
 |---|---|---|
 | `CLOUDFLARE_API_TOKEN` | oui | Cloudflare → My Profile → API Tokens → Create Token → modèle **Edit Cloudflare Workers** |
-| `CLOUDFLARE_ACCOUNT_ID` | si le jeton couvre plusieurs comptes | Cloudflare → Workers & Pages → panneau de droite, *Account ID* |
+| `CLOUDFLARE_ACCOUNT_ID` | en pratique oui | Cloudflare → Workers & Pages → panneau de droite, *Account ID* |
+
+Sans `CLOUDFLARE_ACCOUNT_ID`, Wrangler appelle `/memberships` pour retrouver le compte à
+utiliser. Les jetons restreints — dont ceux issus du modèle *Edit Cloudflare Workers* —
+n'ont pas ce droit et le déploiement échoue sur `Authentication error [code: 10000]`.
+Renseigner l'identifiant de compte évite complètement cet appel.
 
 Le workflow échoue avec un message explicite si `CLOUDFLARE_API_TOKEN` est absent, plutôt
 que de laisser Wrangler produire une erreur d'authentification obscure.
