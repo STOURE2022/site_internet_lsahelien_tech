@@ -151,7 +151,5 @@ fonctionne de la même manière.
 - [ ] Vérifier les mentions de références clients (AXA, Crédit Agricole, BNP Paribas,
       Alchimie) et la mention de Dcarte Engineering au regard des clauses de
       confidentialité et de non-sollicitation des missions concernées.
-- [ ] Trancher la localisation affichée dans le footer et la section Contact :
-      le brief indiquait Longwy, le CV indique Palaiseau.
 - [ ] Ajouter mentions légales et politique de confidentialité si le formulaire collecte
       des données personnelles (RGPD).
