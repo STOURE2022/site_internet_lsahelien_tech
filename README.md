@@ -24,8 +24,11 @@ déclenché à chaque push sur `main` (et manuellement via *Actions → Déploie
 Pages → Run workflow*). La racine du dépôt est publiée telle quelle : aucune étape de
 build, aucun dossier `dist`.
 
-Une manipulation est nécessaire une seule fois, dans l'interface GitHub :
-**Settings → Pages → Build and deployment → Source : GitHub Actions**.
+Le workflow active lui-même GitHub Pages au premier passage (`enablement: true` sur
+`actions/configure-pages`). Si l'organisation ou le compte refuse cette activation
+automatique, la faire à la main une seule fois :
+**Settings → Pages → Build and deployment → Source : GitHub Actions**, puis relancer le
+workflow.
 
 Adresse de publication : `https://stoure2022.github.io/site_internet_lsahelien_tech/`
 

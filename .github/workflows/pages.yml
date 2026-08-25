@@ -26,8 +26,12 @@ jobs:
       - name: Récupération du dépôt
         uses: actions/checkout@v4
 
+      # enablement: true active GitHub Pages via l'API si ce n'est pas déjà fait,
+      # ce qui évite d'avoir à le régler à la main dans Settings → Pages
       - name: Configuration de Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       # Le site est statique : la racine du dépôt est publiée telle quelle
       - name: Préparation de l'artefact
