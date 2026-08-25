@@ -103,6 +103,18 @@ Leur couleur suit `--argile-dark`.
 `assets/img/bogolan.svg` est un motif carré répétable (carrés, losanges, tirets),
 appliqué par `.bogolan` en `background-repeat` à 7 % d'opacité.
 
+## Contenu factuel
+
+Les tags techniques des cartes Services, la carte « status » de la section Profil et le
+bandeau Références reprennent la stack et les missions réellement exercées (Spark,
+Databricks, Delta Lake, Kafka, Hadoop/Cloudera, Docker, Jenkins, Terraform, Ansible,
+Grafana). Toute modification de ces blocs doit rester alignée sur le parcours réel :
+ce sont les seuls endroits du site qui portent des affirmations vérifiables.
+
+Le bandeau Références distingue volontairement le contexte des missions (assurance,
+banque, streaming) de la société qui les portait (Dcarte Engineering), afin qu'aucune
+marque citée ne soit présentée comme un client direct de Lsahelien-tech.
+
 ## Formulaire de contact
 
 La validation est intégralement côté front (`assets/js/main.js`) : champs requis, format
@@ -136,7 +148,10 @@ fonctionne de la même manière.
 
 - [ ] Remplacer le portrait par une photographie réelle (IMG-2).
 - [ ] Renseigner `ENDPOINT` dans `assets/js/main.js`.
-- [ ] Vérifier les mentions de références clients (AXA, Crédit Agricole, BNP Paribas)
-      au regard des clauses de confidentialité des missions concernées.
+- [ ] Vérifier les mentions de références clients (AXA, Crédit Agricole, BNP Paribas,
+      Alchimie) et la mention de Dcarte Engineering au regard des clauses de
+      confidentialité et de non-sollicitation des missions concernées.
+- [ ] Trancher la localisation affichée dans le footer et la section Contact :
+      le brief indiquait Longwy, le CV indique Palaiseau.
 - [ ] Ajouter mentions légales et politique de confidentialité si le formulaire collecte
       des données personnelles (RGPD).
