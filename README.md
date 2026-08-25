@@ -19,26 +19,47 @@ README.md
 
 ## Déploiement
 
-Le site est publié sur GitHub Pages par le workflow `.github/workflows/pages.yml`,
-déclenché à chaque push sur `main` (et manuellement via *Actions → Déploiement GitHub
-Pages → Run workflow*). La racine du dépôt est publiée telle quelle : aucune étape de
-build, aucun dossier `dist`.
+Le site est déployé automatiquement sur **Cloudflare Workers** par le workflow
+`.github/workflows/deploy.yml`, à chaque push sur `main` et manuellement via
+*Actions → Déploiement Cloudflare Workers → Run workflow*.
 
-**Réglage à faire une fois**, dans l'interface GitHub :
-**Settings → Pages → Build and deployment → Source : GitHub Actions**.
+Adresse de publication :
+`https://site-internet-lsahelien-tech.touresoumailou19.workers.dev/`
 
-Le workflow tente d'activer Pages lui-même (`enablement: true` sur
-`actions/configure-pages`), mais le `GITHUB_TOKEN` par défaut n'a pas le droit de créer
-un site Pages : l'API répond `Resource not accessible by integration`. L'option est
-conservée car elle devient un simple constat une fois Pages activé, et fonctionne sur les
-dépôts dont le jeton dispose des droits d'administration. Après le réglage manuel,
-relancer le workflow depuis *Actions → Déploiement GitHub Pages → Run workflow*.
+### Fonctionnement
 
-Adresse de publication : `https://stoure2022.github.io/site_internet_lsahelien_tech/`
+`wrangler.toml` déclare un Worker servi uniquement par Workers Static Assets : pas de
+script Worker, pas d'étape de build. La racine du dépôt est publiée telle quelle, à
+l'exception des fichiers listés dans `.assetsignore` (README, workflows, configuration).
 
-Tous les chemins du site sont relatifs (`assets/...`), il fonctionne donc aussi bien à la
-racine d'un domaine qu'en sous-répertoire. Pour un nom de domaine personnalisé, ajouter un
-fichier `CNAME` à la racine contenant le domaine, puis le déclarer dans Settings → Pages.
+Le nom du Worker (`site-internet-lsahelien-tech`) détermine l'URL `workers.dev` : le
+modifier change l'adresse du site.
+
+### Secrets à renseigner une fois
+
+Dans *Settings → Secrets and variables → Actions* du dépôt :
+
+| Secret | Obligatoire | Où le trouver |
+|---|---|---|
+| `CLOUDFLARE_API_TOKEN` | oui | Cloudflare → My Profile → API Tokens → Create Token → modèle **Edit Cloudflare Workers** |
+| `CLOUDFLARE_ACCOUNT_ID` | si le jeton couvre plusieurs comptes | Cloudflare → Workers & Pages → panneau de droite, *Account ID* |
+
+Le workflow échoue avec un message explicite si `CLOUDFLARE_API_TOKEN` est absent, plutôt
+que de laisser Wrangler produire une erreur d'authentification obscure.
+
+### Déploiement manuel
+
+```sh
+npx wrangler deploy          # depuis la racine du dépôt
+npx wrangler dev             # aperçu local sur http://localhost:8787
+```
+
+### Alternative : Cloudflare Workers Builds
+
+Si vous préférez que Cloudflare construise depuis le dépôt plutôt que GitHub Actions,
+connecter le dépôt dans *Workers & Pages → Create → Connect to Git*. Le même
+`wrangler.toml` est utilisé, aucun secret n'est alors à stocker côté GitHub, et le
+workflow `deploy.yml` peut être supprimé pour éviter deux déploiements concurrents.
 
 ## Charte appliquée
 

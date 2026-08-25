@@ -1,0 +1,6 @@
+# Fichiers du dépôt à ne pas publier sur le site
+.assetsignore
+.git
+.github
+README.md
+wrangler.toml

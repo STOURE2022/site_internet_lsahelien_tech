@@ -1,0 +1,12 @@
+# Configuration Cloudflare Workers
+# Site statique servi par Workers Static Assets : aucun script Worker, aucun build.
+# Le nom conditionne l'URL workers.dev :
+#   site-internet-lsahelien-tech.<sous-domaine>.workers.dev
+
+name = "site-internet-lsahelien-tech"
+compatibility_date = "2026-08-25"
+
+[assets]
+# La racine du dépôt est publiée telle quelle ; les fichiers listés dans
+# .assetsignore (README, workflows, configuration) en sont exclus.
+directory = "."
