@@ -98,7 +98,10 @@
         setStatus('Message envoyé. Réponse sous 48 h ouvrées.');
       });
     }).catch(function (err) {
-      setStatus(err.message || 'L’envoi a échoué. Réessayez plus tard.', true);
+      // En cas d'échec, l'adresse directe évite au visiteur d'être laissé
+      // sans recours — elle figure aussi dans la colonne de gauche.
+      var base = err.message || 'L’envoi a échoué.';
+      setStatus(base + ' Vous pouvez écrire à lsahelien.tech@gmail.com.', true);
     }).then(function () {
       bouton.disabled = false;
     });

@@ -226,6 +226,11 @@ npx wrangler secret put CONTACT_FROM     # adresse expéditrice
 Ou dans le tableau de bord : *Workers & Pages → site-internet-lsahelien-tech → Settings →
 Variables and Secrets*.
 
+L'adresse publiée sur le site est `lsahelien.tech@gmail.com` — elle figure dans la section
+Contact et dans le message affiché quand l'envoi échoue, pour que le visiteur ne reste
+jamais sans recours. Elle est écrite en clair dans `public/index.html` : c'est le choix le
+plus accessible, au prix d'une exposition aux robots collecteurs d'adresses.
+
 `CONTACT_FROM` doit être **validée comme expéditeur chez Brevo** (*Expéditeurs, domaine,
 IP*), sinon l'API refuse l'envoi. Tant qu'un des trois secrets manque, le Worker répond
 503 avec « Le formulaire n'est pas encore configuré » plutôt que d'échouer obscurément.

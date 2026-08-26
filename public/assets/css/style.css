@@ -343,6 +343,8 @@ a { color: inherit; }
 .contact-meta li { display: grid; grid-template-columns: 170px 1fr; gap: 12px; padding: 11px 0; border-top: var(--border) rgba(244,239,227,.16); color: rgba(244,239,227,.9); }
 .contact-meta li:last-child { border-bottom: var(--border) rgba(244,239,227,.16); }
 .contact-meta span { color: var(--or); }
+.contact-meta a { color: var(--creme); text-decoration: underline; text-underline-offset: 3px; }
+.contact-meta a:hover { color: var(--or); }
 
 .form {
   border: var(--border) rgba(244,239,227,.22);
