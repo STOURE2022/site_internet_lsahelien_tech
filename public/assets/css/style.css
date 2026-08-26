@@ -232,7 +232,24 @@ a { color: inherit; }
 .profil-side { display: grid; gap: 24px; }
 
 .portrait { margin: 0; border: var(--border) rgba(34,27,16,.25); border-radius: var(--radius); overflow: hidden; background: var(--indigo-2); }
-.portrait img { width: 100%; }
+
+/* Le cadre impose le format 4:5 : une photo de proportions différentes est
+   recadrée au centre plutôt que de déformer la mise en page. */
+.portrait img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; display: block; }
+
+/* Traitement duotone indigo, appliqué aux seules photos — le visuel de
+   remplacement est un SVG déjà dans la charte et n'a rien à désaturer.
+   Il suffit donc de déposer la photo et d'en changer le `src` : aucune
+   modification de cette feuille de style n'est nécessaire.
+   Pour revenir à la photo brute, supprimer ce bloc. */
+.portrait img[src$=".jpg"],
+.portrait img[src$=".jpeg"],
+.portrait img[src$=".png"],
+.portrait img[src$=".webp"] {
+  filter: grayscale(1) contrast(1.06) brightness(.97);
+  mix-blend-mode: luminosity;
+  opacity: .92;
+}
 
 .status-card {
   border: var(--border) rgba(34,27,16,.35);

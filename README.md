@@ -138,25 +138,35 @@ plan, zone calme dans le tiers gauche pour ne pas concurrencer le titre.
 
 ### IMG-2 — portrait (`public/assets/img/portrait-placeholder.svg`)
 
-Le fichier livré est **volontairement un emplacement réservé**, pas une photographie :
-utiliser le portrait d'une autre personne pour représenter Soumailou Touré reviendrait à
-publier une fausse image d'une personne réelle. Remplacer par une photo authentique :
+Le fichier livré est **volontairement un emplacement réservé**, pas une photographie.
+Pour le remplacer, **deux modifications suffisent** :
 
-1. cadrage 4:5, buste, fond neutre, lumière douce, largeur 800 px ;
-2. enregistrer en `public/assets/img/portrait.jpg` (ou `.webp`) ;
-3. dans `public/index.html`, remplacer le `src` de `.portrait img`, mettre `width="800" height="1000"`
-   et un `alt` descriptif ;
-4. pour le traitement duotone indigo, ajouter dans `style.css` :
+1. Déposer la photo dans `public/assets/img/`, par exemple `portrait.jpg`
+   (formats reconnus : `.jpg`, `.jpeg`, `.png`, `.webp`).
+2. Dans `public/index.html`, remplacer le `src` de `.portrait img` et adapter l'attribut
+   `alt`, qui décrit aujourd'hui un emplacement vide :
 
-   ```css
-   .portrait img { filter: grayscale(1) contrast(1.05); }
-   .portrait { background: var(--indigo-2); }
-   .portrait img { mix-blend-mode: luminosity; }
+   ```html
+   <img src="assets/img/portrait.jpg"
+        alt="Soumailou Touré, ingénieur data et DevOps."
+        width="800" height="1000">
    ```
 
-Si une photo de studio n'est pas disponible immédiatement, mots-clés utiles pour un
-brief photographe : *portrait corporate sobre, fond uni, lumière latérale douce, cadrage
-4:5, regard caméra*.
+Rien d'autre n'est à toucher :
+
+- **Le format est imposé par le cadre.** `.portrait img` applique `aspect-ratio: 4/5` et
+  `object-fit: cover` : une photo de proportions différentes est recadrée au centre, sans
+  déformation ni décalage de la mise en page. Les attributs `width`/`height` n'ont donc pas
+  à correspondre exactement aux dimensions réelles — ils servent à réserver la place
+  pendant le chargement.
+- **Le traitement duotone indigo s'applique tout seul.** La règle vise les extensions de
+  fichiers matricielles (`.portrait img[src$=".jpg"]`…), et laisse le SVG de remplacement
+  intact. Pour afficher la photo sans traitement, supprimer ce bloc dans
+  `public/assets/css/style.css`.
+
+Cadrage conseillé : buste, fond neutre, lumière douce, largeur 800 px minimum. Une photo
+prise de face avec un téléphone en mode selfie apparaît inversée — le texte d'un vêtement
+s'y lit à l'envers ; un miroir horizontal corrige ce défaut.
 
 ### IMG-3 — pictogrammes des services
 
