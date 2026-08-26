@@ -7,6 +7,7 @@ name = "site-internet-lsahelien-tech"
 compatibility_date = "2026-08-25"
 
 [assets]
-# La racine du dépôt est publiée telle quelle ; les fichiers listés dans
-# .assetsignore (README, workflows, configuration) en sont exclus.
-directory = "."
+# Seul public/ est publié. Ne jamais pointer sur la racine du dépôt : l'action
+# GitHub y installe node_modules, et Wrangler tenterait de téléverser son propre
+# binaire (145 Mio, au-delà de la limite de 25 Mio par fichier).
+directory = "./public"

@@ -5,17 +5,25 @@ Ouvrir `index.html` dans un navigateur suffit ; le déploiement se fait par simp
 copie des fichiers (GitHub Pages, Netlify, Vercel, ou n'importe quel hébergeur statique).
 
 ```
-index.html
-assets/
-  css/style.css      Feuille de style unique (variables de charte en tête de fichier)
-  js/main.js         Année du footer, menu mobile, validation du formulaire
-  img/
-    hero-sahel.svg           IMG-1 — arrière-plan du hero
-    portrait-placeholder.svg IMG-2 — emplacement du portrait (à remplacer)
-    bogolan.svg              IMG-4 — motif de fond de la section Méthode
-    favicon.svg
+public/                Racine publiée — rien d'autre n'est servi
+  index.html
+  assets/
+    css/style.css      Feuille de style unique (variables de charte en tête de fichier)
+    js/main.js         Année du footer, menu mobile, validation du formulaire
+    img/
+      hero-sahel.svg           IMG-1 — arrière-plan du hero
+      portrait-placeholder.svg IMG-2 — emplacement du portrait (à remplacer)
+      bogolan.svg              IMG-4 — motif de fond de la section Méthode
+      favicon.svg
+wrangler.toml          Configuration Cloudflare Workers
+.github/workflows/     Déploiement automatique
 README.md
 ```
+
+Le site vit dans `public/` et non à la racine : l'action GitHub installe Wrangler dans
+`node_modules/` au sein du dépôt, et publier la racine reviendrait à téléverser ce
+dossier — le binaire `workerd` pèse 145 Mio, très au-delà de la limite de 25 Mio par
+fichier de Workers.
 
 ## Déploiement
 
@@ -29,8 +37,7 @@ Adresse de publication :
 ### Fonctionnement
 
 `wrangler.toml` déclare un Worker servi uniquement par Workers Static Assets : pas de
-script Worker, pas d'étape de build. La racine du dépôt est publiée telle quelle, à
-l'exception des fichiers listés dans `.assetsignore` (README, workflows, configuration).
+script Worker, pas d'étape de build. Seul le contenu de `public/` est publié.
 
 Le nom du Worker (`site-internet-lsahelien-tech`) détermine l'URL `workers.dev` : le
 modifier change l'adresse du site.
@@ -54,7 +61,7 @@ que de laisser Wrangler produire une erreur d'authentification obscure.
 
 ### Métadonnées de partage
 
-`index.html` déclare une URL canonique et des balises Open Graph pointant vers l'adresse
+`public/index.html` déclare une URL canonique et des balises Open Graph pointant vers l'adresse
 `workers.dev`. En cas de changement de domaine, mettre à jour `link[rel=canonical]`,
 `meta[property="og:url"]` et `meta[property="og:image"]`.
 
@@ -104,7 +111,7 @@ Le réseau de l'environnement de génération bloque les banques d'images : les 
 livrés sont donc des **illustrations vectorielles produites pour ce site** (SVG, quelques
 kilo-octets, nettes à toutes les résolutions), et non des photographies.
 
-### IMG-1 — arrière-plan du hero (`assets/img/hero-sahel.svg`)
+### IMG-1 — arrière-plan du hero (`public/assets/img/hero-sahel.svg`)
 
 Scène sahélienne stylisée (dunes, architecture en banco avec torons, acacias, motif
 bogolan au sol) déjà traitée dans la palette, recouverte d'un voile `rgba(19,30,56,.74)`
@@ -112,8 +119,8 @@ défini par `.hero-veil`.
 
 Pour la remplacer par une photographie :
 
-1. déposer le fichier dans `assets/img/` (WebP conseillé, largeur 1920 px, ~200 Ko) ;
-2. dans `index.html`, remplacer la valeur `src` de `.hero-bg` et adapter l'attribut `alt` ;
+1. déposer le fichier dans `public/assets/img/` (WebP conseillé, largeur 1920 px, ~200 Ko) ;
+2. dans `public/index.html`, remplacer la valeur `src` de `.hero-bg` et adapter l'attribut `alt` ;
 3. ajuster l'opacité du voile dans `style.css` (`.hero-veil`) — viser 70 à 80 % pour
    conserver la lisibilité du titre.
 
@@ -129,15 +136,15 @@ obligatoire (vérifier la licence au téléchargement) :
 Critères de choix : plan large, horizon bas, absence de visage identifiable au premier
 plan, zone calme dans le tiers gauche pour ne pas concurrencer le titre.
 
-### IMG-2 — portrait (`assets/img/portrait-placeholder.svg`)
+### IMG-2 — portrait (`public/assets/img/portrait-placeholder.svg`)
 
 Le fichier livré est **volontairement un emplacement réservé**, pas une photographie :
 utiliser le portrait d'une autre personne pour représenter Soumailou Touré reviendrait à
 publier une fausse image d'une personne réelle. Remplacer par une photo authentique :
 
 1. cadrage 4:5, buste, fond neutre, lumière douce, largeur 800 px ;
-2. enregistrer en `assets/img/portrait.jpg` (ou `.webp`) ;
-3. dans `index.html`, remplacer le `src` de `.portrait img`, mettre `width="800" height="1000"`
+2. enregistrer en `public/assets/img/portrait.jpg` (ou `.webp`) ;
+3. dans `public/index.html`, remplacer le `src` de `.portrait img`, mettre `width="800" height="1000"`
    et un `alt` descriptif ;
 4. pour le traitement duotone indigo, ajouter dans `style.css` :
 
@@ -154,12 +161,12 @@ brief photographe : *portrait corporate sobre, fond uni, lumière latérale douc
 ### IMG-3 — pictogrammes des services
 
 Quatre pictogrammes mono-trait dessinés à la main en SVG, intégrés directement dans
-`index.html` (classe `.ico`), dans le même vocabulaire graphique que le diagramme du hero.
+`public/index.html` (classe `.ico`), dans le même vocabulaire graphique que le diagramme du hero.
 Leur couleur suit `--argile-dark`.
 
 ### IMG-4 — motif de la section Méthode
 
-`assets/img/bogolan.svg` est un motif carré répétable (carrés, losanges, tirets),
+`public/assets/img/bogolan.svg` est un motif carré répétable (carrés, losanges, tirets),
 appliqué par `.bogolan` en `background-repeat` à 7 % d'opacité.
 
 ## Contenu factuel
@@ -176,7 +183,7 @@ marque citée ne soit présentée comme un client direct de Lsahelien-tech.
 
 ## Formulaire de contact
 
-La validation est intégralement côté front (`assets/js/main.js`) : champs requis, format
+La validation est intégralement côté front (`public/assets/js/main.js`) : champs requis, format
 d'email, message d'au moins 20 caractères, messages d'erreur reliés aux champs par
 `aria-describedby` et `aria-invalid`, focus placé sur le premier champ fautif.
 
@@ -184,7 +191,7 @@ Aucun message n'est envoyé tant qu'un service d'envoi n'est pas branché. Pour 
 avec [Formspree](https://formspree.io) :
 
 1. créer un formulaire et récupérer son identifiant ;
-2. dans `assets/js/main.js`, renseigner :
+2. dans `public/assets/js/main.js`, renseigner :
 
    ```js
    var ENDPOINT = 'https://formspree.io/f/xxxxxxxx';
@@ -206,7 +213,7 @@ fonctionne de la même manière.
 ## Points à compléter avant mise en ligne
 
 - [ ] Remplacer le portrait par une photographie réelle (IMG-2).
-- [ ] Renseigner `ENDPOINT` dans `assets/js/main.js`.
+- [ ] Renseigner `ENDPOINT` dans `public/assets/js/main.js`.
 - [ ] Vérifier les mentions de références clients (AXA, Crédit Agricole, BNP Paribas,
       Alchimie) et la mention de Dcarte Engineering au regard des clauses de
       confidentialité et de non-sollicitation des missions concernées.
