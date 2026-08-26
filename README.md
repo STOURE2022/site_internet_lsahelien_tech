@@ -136,37 +136,40 @@ obligatoire (vérifier la licence au téléchargement) :
 Critères de choix : plan large, horizon bas, absence de visage identifiable au premier
 plan, zone calme dans le tiers gauche pour ne pas concurrencer le titre.
 
-### IMG-2 — portrait (`public/assets/img/portrait-placeholder.svg`)
+### IMG-2 — portrait (`public/assets/img/portrait.jpg`)
 
-Le fichier livré est **volontairement un emplacement réservé**, pas une photographie.
-Pour le remplacer, **deux modifications suffisent** :
+Le portrait en place est une photographie réelle, préparée pour le web :
 
-1. Déposer la photo dans `public/assets/img/`, par exemple `portrait.jpg`
-   (formats reconnus : `.jpg`, `.jpeg`, `.png`, `.webp`).
-2. Dans `public/index.html`, remplacer le `src` de `.portrait img` et adapter l'attribut
-   `alt`, qui décrit aujourd'hui un emplacement vide :
+- recadrée au format 4:5 sur le buste, au-dessus du lettrage du vêtement ;
+- redimensionnée en 800 × 1000 et réencodée en JPEG progressif, soit 60 Ko contre
+  1,8 Mo pour l'original 3456 × 4608 ;
+- métadonnées EXIF supprimées — un fichier issu d'un téléphone embarque modèle
+  d'appareil, date et parfois coordonnées GPS, qu'il n'y a aucune raison de publier.
 
-   ```html
-   <img src="assets/img/portrait.jpg"
-        alt="Soumailou Touré, ingénieur data et DevOps."
-        width="800" height="1000">
-   ```
+L'original pleine résolution reste accessible dans l'historique Git, au commit qui
+l'a ajouté.
 
-Rien d'autre n'est à toucher :
+Le rendu tient à deux règles de `public/assets/css/style.css`, ciblant les extensions
+matricielles pour laisser intact `portrait-placeholder.svg`, conservé comme repli :
 
-- **Le format est imposé par le cadre.** `.portrait img` applique `aspect-ratio: 4/5` et
-  `object-fit: cover` : une photo de proportions différentes est recadrée au centre, sans
-  déformation ni décalage de la mise en page. Les attributs `width`/`height` n'ont donc pas
-  à correspondre exactement aux dimensions réelles — ils servent à réserver la place
-  pendant le chargement.
-- **Le traitement duotone indigo s'applique tout seul.** La règle vise les extensions de
-  fichiers matricielles (`.portrait img[src$=".jpg"]`…), et laisse le SVG de remplacement
-  intact. Pour afficher la photo sans traitement, supprimer ce bloc dans
-  `public/assets/css/style.css`.
+- **duotone indigo** — `grayscale` puis `mix-blend-mode: luminosity` sur le fond indigo
+  du cadre ; le contraste et la luminosité sont réglés pour une photo claire ;
+- **vignettage** — un dégradé radial discret qui détache le sujet d'un arrière-plan chargé.
 
-Cadrage conseillé : buste, fond neutre, lumière douce, largeur 800 px minimum. Une photo
-prise de face avec un téléphone en mode selfie apparaît inversée — le texte d'un vêtement
-s'y lit à l'envers ; un miroir horizontal corrige ce défaut.
+Pour afficher la photo sans traitement, supprimer ces deux blocs.
+
+**Remplacer le portrait par un autre** demande deux modifications :
+
+1. déposer le fichier dans `public/assets/img/` (`.jpg`, `.jpeg`, `.png` ou `.webp`) ;
+2. dans `public/index.html`, changer le `src` de `.portrait img` et son `alt`.
+
+Le cadre applique `aspect-ratio: 4/5` et `object-fit: cover` : une photo de proportions
+différentes est recadrée au centre, sans déformation ni décalage de la mise en page.
+
+Une photo prise de face avec un téléphone en mode selfie apparaît inversée — le texte
+d'un vêtement s'y lit à l'envers. Le recadrage actuel place la limite basse au-dessus du
+lettrage, ce qui rend le défaut invisible ; un cadrage plus large demanderait un miroir
+horizontal.
 
 ### IMG-3 — pictogrammes des services
 
@@ -222,7 +225,6 @@ fonctionne de la même manière.
 
 ## Points à compléter avant mise en ligne
 
-- [ ] Remplacer le portrait par une photographie réelle (IMG-2).
 - [ ] Renseigner `ENDPOINT` dans `public/assets/js/main.js`.
 - [ ] Vérifier les mentions de références clients (AXA, Crédit Agricole, BNP Paribas,
       Alchimie) et la mention de Dcarte Engineering au regard des clauses de

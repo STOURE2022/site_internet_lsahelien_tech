@@ -246,9 +246,27 @@ a { color: inherit; }
 .portrait img[src$=".jpeg"],
 .portrait img[src$=".png"],
 .portrait img[src$=".webp"] {
-  filter: grayscale(1) contrast(1.06) brightness(.97);
+  filter: grayscale(1) contrast(1.18) brightness(.86);
   mix-blend-mode: luminosity;
   opacity: .92;
+}
+
+/* Vignettage discret : détache le sujet d'un arrière-plan chargé.
+   Ne s'applique qu'en présence d'une photo, pas sur le SVG de remplacement. */
+.portrait:has(img[src$=".jpg"]),
+.portrait:has(img[src$=".jpeg"]),
+.portrait:has(img[src$=".png"]),
+.portrait:has(img[src$=".webp"]) { position: relative; }
+
+.portrait:has(img[src$=".jpg"])::after,
+.portrait:has(img[src$=".jpeg"])::after,
+.portrait:has(img[src$=".png"])::after,
+.portrait:has(img[src$=".webp"])::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(115% 85% at 50% 36%, transparent 40%, rgba(19, 30, 56, .45) 100%);
 }
 
 .status-card {
