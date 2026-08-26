@@ -346,6 +346,14 @@
           <p class="error" id="err-message" role="alert" hidden>Décrivez votre besoin en quelques lignes (20 caractères minimum).</p>
         </div>
 
+        <!-- Champ piège : masqué à l'écran et aux lecteurs d'écran, ignoré au
+             clavier. Un robot le remplit, un visiteur non — le Worker rejette
+             alors la requête. -->
+        <div class="honeypot" aria-hidden="true">
+          <label for="website">Ne pas remplir ce champ</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
         <button type="submit" class="btn btn-solid btn-block">Envoyer</button>
         <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
       </form>

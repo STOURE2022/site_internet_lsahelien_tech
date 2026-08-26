@@ -1,13 +1,21 @@
 # Configuration Cloudflare Workers
-# Site statique servi par Workers Static Assets : aucun script Worker, aucun build.
 # Le nom conditionne l'URL workers.dev :
 #   site-internet-lsahelien-tech.<sous-domaine>.workers.dev
 
 name = "site-internet-lsahelien-tech"
+main = "src/worker.js"
 compatibility_date = "2026-08-25"
 
 [assets]
 # Seul public/ est publié. Ne jamais pointer sur la racine du dépôt : l'action
 # GitHub y installe node_modules, et Wrangler tenterait de téléverser son propre
 # binaire (145 Mio, au-delà de la limite de 25 Mio par fichier).
+#
+# Les fichiers correspondants sont servis directement ; seules les requêtes sans
+# fichier associé atteignent le Worker, qui traite /api/contact.
 directory = "./public"
+
+[observability]
+# Journaux consultables dans le tableau de bord : indispensable pour diagnostiquer
+# un échec d'envoi, dont le détail n'est jamais renvoyé au visiteur.
+enabled = true

@@ -15,6 +15,7 @@ public/                Racine publiée — rien d'autre n'est servi
       portrait-placeholder.svg IMG-2 — emplacement du portrait (à remplacer)
       bogolan.svg              IMG-4 — motif de fond de la section Méthode
       favicon.svg
+src/worker.js          Worker : traite POST /api/contact et relaie vers Brevo
 wrangler.toml          Configuration Cloudflare Workers
 .github/workflows/     Déploiement automatique
 README.md
@@ -36,13 +37,17 @@ Adresse de publication :
 
 ### Fonctionnement
 
-`wrangler.toml` déclare un Worker servi uniquement par Workers Static Assets : pas de
-script Worker, pas d'étape de build. Seul le contenu de `public/` est publié.
+`wrangler.toml` déclare un Worker adossé à Workers Static Assets, sans étape de build.
+Une requête qui correspond à un fichier de `public/` est servie directement ; les autres
+atteignent `src/worker.js`, qui ne traite que `POST /api/contact` et répond 404 au reste.
 
 Le nom du Worker (`site-internet-lsahelien-tech`) détermine l'URL `workers.dev` : le
 modifier change l'adresse du site.
 
-### Secrets à renseigner une fois
+### Secrets GitHub, pour le déploiement
+
+Ils autorisent l'action GitHub à déployer. Les secrets nécessaires à l'envoi des
+messages, eux, vivent côté Cloudflare — voir « Formulaire de contact ».
 
 Dans *Settings → Secrets and variables → Actions* du dépôt :
 
@@ -196,23 +201,65 @@ marque citée ne soit présentée comme un client direct de Lsahelien-tech.
 
 ## Formulaire de contact
 
-La validation est intégralement côté front (`public/assets/js/main.js`) : champs requis, format
-d'email, message d'au moins 20 caractères, messages d'erreur reliés aux champs par
-`aria-describedby` et `aria-invalid`, focus placé sur le premier champ fautif.
+### Pourquoi un Worker
 
-Aucun message n'est envoyé tant qu'un service d'envoi n'est pas branché. Pour l'activer
-avec [Formspree](https://formspree.io) :
+Le site est statique : tout ce qu'il contient est lisible par n'importe quel visiteur.
+Une clé d'API Brevo placée dans le JavaScript de la page serait donc publique, et
+permettrait à quiconque d'envoyer des emails au nom du compte. Le formulaire appelle
+`POST /api/contact` sur le Worker, qui détient seul la clé et relaie vers l'API Brevo.
 
-1. créer un formulaire et récupérer son identifiant ;
-2. dans `public/assets/js/main.js`, renseigner :
+Le navigateur ne voit jamais que `{"ok": true}` ou un message d'erreur générique : les
+réponses de Brevo, susceptibles de contenir des informations de compte, restent dans les
+journaux Cloudflare.
 
-   ```js
-   var ENDPOINT = 'https://formspree.io/f/xxxxxxxx';
-   ```
+### Secrets Cloudflare, pour l'envoi des messages
 
-Le code d'envoi (`fetch` en `POST` avec `FormData`) est déjà écrit et s'active dès que
-`ENDPOINT` est non vide. Tout backend acceptant un `POST multipart` et répondant en 2xx
-fonctionne de la même manière.
+Les secrets vivent dans Cloudflare, jamais dans le dépôt ni dans les secrets GitHub. Ils
+survivent aux déploiements — à définir une seule fois, depuis la racine du dépôt :
+
+```sh
+npx wrangler secret put BREVO_API_KEY    # clé API Brevo (xkeysib-…)
+npx wrangler secret put CONTACT_TO       # adresse qui reçoit les messages
+npx wrangler secret put CONTACT_FROM     # adresse expéditrice
+```
+
+Ou dans le tableau de bord : *Workers & Pages → site-internet-lsahelien-tech → Settings →
+Variables and Secrets*.
+
+`CONTACT_FROM` doit être **validée comme expéditeur chez Brevo** (*Expéditeurs, domaine,
+IP*), sinon l'API refuse l'envoi. Tant qu'un des trois secrets manque, le Worker répond
+503 avec « Le formulaire n'est pas encore configuré » plutôt que d'échouer obscurément.
+
+La clé API (`xkeysib-…`) suffit : la clé SMTP (`xsmtpsib-…`) sert au protocole SMTP, que
+les Workers Cloudflare ne peuvent pas utiliser — ils ne disposent pas de sockets TCP
+sortants classiques. C'est l'API HTTP de Brevo qui est appelée.
+
+### Validation
+
+Elle a lieu deux fois, et c'est délibéré. Côté navigateur
+(`public/assets/js/main.js`) pour éviter un aller-retour réseau sur une faute de frappe ;
+côté Worker parce que la validation navigateur se contourne en trois lignes de console.
+Les deux appliquent les mêmes règles : nom d'au moins 2 caractères, format d'email,
+message de 20 à 5000 caractères.
+
+Le formulaire contient un champ piège (`website`), masqué à l'écran, aux lecteurs d'écran
+et à la tabulation. Rempli, la requête est rejetée : les robots remplissent tous les
+champs d'un formulaire, les visiteurs ne voient pas celui-là.
+
+**Limite connue :** il n'y a pas de limitation de débit. Le champ piège arrête le spam
+automatisé courant, pas un envoi répété délibéré. Si le besoin s'en fait sentir, Cloudflare
+Turnstile ou un compteur en KV indexé sur l'adresse IP sont les deux réponses habituelles.
+
+### Vérifier après déploiement
+
+```sh
+curl -i -X POST https://site-internet-lsahelien-tech.touresoumailou19.workers.dev/api/contact \
+  -H 'content-type: application/json' \
+  -d '{"name":"Test","email":"vous@exemple.fr","message":"Message de contrôle de la chaîne d envoi."}'
+```
+
+`200 {"ok":true}` et un email reçu : la chaîne fonctionne. `503` : un secret manque.
+`502` : Brevo a refusé — le détail est dans les journaux du Worker.
 
 ## Accessibilité et performance
 
@@ -225,7 +272,9 @@ fonctionne de la même manière.
 
 ## Points à compléter avant mise en ligne
 
-- [ ] Renseigner `ENDPOINT` dans `public/assets/js/main.js`.
+- [ ] Définir les trois secrets Cloudflare (`BREVO_API_KEY`, `CONTACT_TO`, `CONTACT_FROM`).
+- [ ] Valider l'adresse expéditrice comme expéditeur chez Brevo.
+- [ ] Tester l'envoi de bout en bout après déploiement.
 - [ ] Vérifier les mentions de références clients (AXA, Crédit Agricole, BNP Paribas,
       Alchimie) et la mention de Dcarte Engineering au regard des clauses de
       confidentialité et de non-sollicitation des missions concernées.

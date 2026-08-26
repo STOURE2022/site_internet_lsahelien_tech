@@ -21,10 +21,10 @@
   }
 
   /* ---- Formulaire de contact ----
-     Validation front uniquement. Pour l'envoi réel, renseigner ENDPOINT
-     avec une URL Formspree (https://formspree.io/f/xxxxxxxx) ou celle
-     de votre backend, puis décommenter le bloc `fetch` ci-dessous.      */
-  var ENDPOINT = '';
+     La validation ci-dessous est un confort d'usage : elle évite un aller-retour
+     réseau pour une faute de frappe. Le Worker revalide tout de son côté, la
+     validation navigateur pouvant être contournée. */
+  var ENDPOINT = '/api/contact';
 
   var form = document.getElementById('contact-form');
   if (!form) { return; }
@@ -78,22 +78,29 @@
       return;
     }
 
-    if (!ENDPOINT) {
-      setStatus('Formulaire valide. Aucun service d’envoi n’est encore connecté (voir assets/js/main.js).');
-      return;
-    }
-
+    var bouton = form.querySelector('button[type=submit]');
+    bouton.disabled = true;
     setStatus('Envoi en cours…');
+
     fetch(ENDPOINT, {
       method: 'POST',
-      headers: { Accept: 'application/json' },
-      body: new FormData(form)
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        message: document.getElementById('message').value,
+        website: document.getElementById('website').value
+      })
     }).then(function (res) {
-      if (!res.ok) { throw new Error('HTTP ' + res.status); }
-      form.reset();
-      setStatus('Message envoyé. Réponse sous 48 h ouvrées.');
-    }).catch(function () {
-      setStatus('L’envoi a échoué. Réessayez ou écrivez directement par email.', true);
+      return res.json().catch(function () { return {}; }).then(function (corps) {
+        if (!res.ok) { throw new Error(corps.error || 'HTTP ' + res.status); }
+        form.reset();
+        setStatus('Message envoyé. Réponse sous 48 h ouvrées.');
+      });
+    }).catch(function (err) {
+      setStatus(err.message || 'L’envoi a échoué. Réessayez plus tard.', true);
+    }).then(function () {
+      bouton.disabled = false;
     });
   });
 })();
